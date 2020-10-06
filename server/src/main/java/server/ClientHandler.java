@@ -24,7 +24,7 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-                    socket.setSoTimeout(5000);
+                    socket.setSoTimeout(120000);
                     //цикл аутентификации
                     while (true) {
                         String str = in.readUTF();
@@ -46,9 +46,10 @@ public class ClientHandler {
                                     System.out.println("Клиент " + nickname + " подключился");
                                     socket.setSoTimeout(0);
 
-                                    //==============//
-                                    sendMsg(SQLHandler.getMessageForNick(nickname));
-                                    //==============//
+                                    sendMsg(FileHandler.getMessageForNick(nickname));
+//                                    //==============//
+//                                    sendMsg(SQLHandler.getMessageForNick(nickname));
+//                                    //==============//
 
                                     break;
                                 } else {
@@ -107,6 +108,7 @@ public class ClientHandler {
                                 if (server.getAuthService().changeNick(this.nickname, token[1])) {
                                     sendMsg("/yournickis " + token[1]);
                                     sendMsg("Ваш ник изменен на " + token[1]);
+                                    FileHandler.setMessageForChangeNick(this.nickname, token[1]);   //создаем файл истории событий для пользователя с новым ником
                                     this.nickname = token[1];
                                     server.broadcastClientList();
                                 } else {

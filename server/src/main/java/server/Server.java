@@ -56,29 +56,33 @@ public class Server {
 
     public void broadcastMsg(ClientHandler sender, String msg) {
         SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss");
-
-        String message = String.format(" %s %s : %s", formater.format(new Date()), sender.getNickname(), msg);
+        String message = String.format("%s %s : %s", formater.format(new Date()), sender.getNickname(), msg);
 
         //==============//
         SQLHandler.addMessage(sender.getNickname(), "null", msg, formater.format(new Date()));
         //==============//
         for (ClientHandler c : clients) {
             c.sendMsg(message);
+            FileHandler.addMessage(c.getNickname(), message);   //Запись сообщения в файл клиента
         }
     }
 
     public void privateMsg(ClientHandler sender, String receiver, String msg) {
-        String message = String.format("[%s] private [%s] : %s", sender.getNickname(), receiver, msg);
+        SimpleDateFormat formater = new SimpleDateFormat("HH:mm:ss");
+        String message = String.format("%s [%s] private [%s] : %s", formater.format(new Date()), sender.getNickname(), receiver, msg);
         for (ClientHandler c : clients) {
             if (c.getNickname().equals(receiver)) {
                 c.sendMsg(message);
 
+                FileHandler.addMessage(c.getNickname(), message);   //Запись сообщения в файл получателя
+
                 //==============//
-                SQLHandler.addMessage(sender.getNickname(),receiver,msg,"once upon a time");
+                SQLHandler.addMessage(sender.getNickname(), receiver, msg, formater.format(new Date()));
                 //==============//
 
                 if (!c.equals(sender)) {
                     sender.sendMsg(message);
+                    FileHandler.addMessage(sender.getNickname(), message);   //Запись сообщения в файл отправителя
                 }
                 return;
             }
