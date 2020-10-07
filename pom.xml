@@ -11,7 +11,8 @@
     <modules>
         <module>client</module>
         <module>server</module>
-     </modules>
+        <module>lesson06</module>
+    </modules>
 
 
     <properties>
